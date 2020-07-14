@@ -32,12 +32,26 @@ RUN git clone https://github.com/VundleVim/Vundle.vim.git
 RUN mkdir -p /root/.vim/bundle
 RUN mv Vundle.vim /root/.vim/bundle
 
+#install apache and php
+ENV TZ=Asia/Seoul
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+RUN apt-get -y install apache2
+RUN apt-get update && apt-get -y install net-tools
+RUN apt-get -y install iputils-ping
 
+#install composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/
+RUN ln -s /usr/local/bin/composer.phar /usr/local/bin/composer
+RUN composer global require laravel/installer
+RUN ln -s /root/.composer/vendor/bin/laravel /usr/local/bin/laravel
+RUN echo "<Directory \"/var/www/html/project/public\">\nOptions Indexes FollowSymLinks\nRequire all granted\nAllowOverride All\n</Directory>" >> /etc/apache2/apache2.conf
+RUN sed -ri 's/\/var\/www\/html/\/var\/www\/html\/project\/public/g' /etc/apache2/sites-available/000-default.conf
 
 #set file
 ADD ./script /root/script/
 RUN touch ~/.vimrc
 RUN echo "set nu\n" >> ~/.vimrc
+RUN a2enmod rewrite
 
 EXPOSE 22 80 8080
 
