@@ -1,0 +1,1 @@
+docker exec -it travel-diary-storage-server-project /bin/bash

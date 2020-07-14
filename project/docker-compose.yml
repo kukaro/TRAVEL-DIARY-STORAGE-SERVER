@@ -1,0 +1,17 @@
+version: '3.3'
+
+services:
+  travel-diary-storage-server-project:
+    image: travel-diary-storage-server-project
+    container_name: travel-diary-storage-server-project
+    command: /usr/sbin/apache2ctl -D FOREGROUND
+    volumes:
+      - ./src/:/var/www/html
+    ports:
+      - '50022:22'
+      - '50080:80'
+      - '58080:8080'
+    expose:
+      - '50022'
+      - '50080'
+      - '58080'
